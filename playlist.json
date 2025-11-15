@@ -1,0 +1,87 @@
+[
+  {
+    "file": "media_0.jpg",
+    "duration": 10,
+    "schedule": "00:00-23:59",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "active": true
+  },
+  {
+    "file": "media_1.jpg",
+    "duration": 10,
+    "schedule": "00:00-23:59",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "active": true
+  },
+  {
+    "file": "media_2.jpg",
+    "duration": 10,
+    "schedule": "00:00-23:59",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "active": true
+  },
+  {
+    "file": "media_3.jpg",
+    "duration": 10,
+    "schedule": "00:00-23:59",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "active": true
+  },
+  {
+    "file": "media_4.jpg",
+    "duration": 10,
+    "schedule": "00:00-23:59",
+    "start_date": "2025-01-01",
+    "end_date": "2025-12-31",
+    "days": [
+      "mon",
+      "tue",
+      "wed",
+      "thu",
+      "fri",
+      "sat",
+      "sun"
+    ],
+    "active": true
+  }
+]

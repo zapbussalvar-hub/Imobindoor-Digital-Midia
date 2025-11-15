@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ImobIndoor Social Mídia - Painel de Controle</title>
+  <meta name="author" content="ImobIndoor Inc.">
+  <meta name="copyright" content="© 2025 ImobIndoor Inc. Todos os direitos reservados.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #6A1B9A; /* Roxa padrão */
+      --secondary-color: #2ecc71; /* Verde */
+      --accent-color: #f39c12; /* Laranja */
+      --dark-bg: #f4f6f9; /* Fundo leve */
+      --light-bg: #ffffff; /* Branco puro */
+      --text-light: #34495e; /* Texto escuro */
+      --text-dark: #95a5a6; /* Texto suave */
+      --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      --border-radius: 8px;
+      --transition: all 0.3s ease;
+      --border-color: rgba(0, 0, 0, 0.08);
+      --panel-bg: #ffffff;
+      --sidebar-bg: #ffffff;
+      --header-bg: #ffffff;
+      --hover-bg: rgba(106, 27, 154, 0.05); /* Leve hover roxo */
+      --active-sidebar-link: #6A1B9A; /* Link ativo roxo */
+      --active-sidebar-link-bg: rgba(106, 27, 154, 0.15); /* Fundo mais forte para ativo */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-light);
+      overflow-x: hidden;
+      transition: background 0.3s ease, color 0.3s ease;
+      min-height: 100vh; /* Garante que o body ocupe a altura mínima */
+    }
+
+    /* Header */
+    header {
+      background: var(--header-bg);
+      color: var(--text-light);
+      padding: 10px 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      color: var(--primary-color); /* Logo com cor primária */
+      margin-right: auto;
+    }
+
+    .logo i { margin-right: 10px; }
+
+    #sidebar-toggle {
+      margin-right: 10px;
+      background: var(--primary-color);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+    #sidebar-toggle:hover {
+      background: #5a178a;
+    }
+
+    /* Main container */
+    .main-container {
+      display: flex;
+      min-height: calc(100vh - 60px); /* Ajustado para o cabeçalho */
+      margin-top: 60px; /* Espaço para o cabeçalho fixo */
+      width: 100%;
+    }
+
+    /* Sidebar */
+    .main-sidebar {
+      width: 280px;
+      background: var(--sidebar-bg);
+      padding: 20px;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      transition: width 0.3s ease, left 0.3s ease; /* Adicionado left para collapse */
+      z-index: 999;
+      border-right: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-section {
+      margin-bottom: 20px;
+    }
+
+    .sidebar-section h2 {
+      color: var(--primary-color); /* Títulos da seção com cor primária */
+      font-size: 18px;
+      margin-bottom: 12px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+    }
+     .sidebar-section h2 i { margin-right: 8px; color: var(--accent-color); /* Ícone do título com cor de destaque */ }
+
+
+    .sidebar-nav { list-style: none; padding: 0; }
+
+    .sidebar-nav li a {
+      color: var(--text-light);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    .sidebar-nav li a:hover {
+      background: var(--hover-bg);
+      color: var(--primary-color); /* Texto do link ao passar o mouse com cor primária */
+    }
+     .sidebar-nav li a.active {
+        background: var(--active-sidebar-link-bg);
+        color: var(--active-sidebar-link); /* Cor do link ativo */
+        font-weight: bold;
+     }
+     .sidebar-nav li a i { margin-right: 10px; width: 20px; text-align: center;}
+
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      margin-left: 280px; /* Espaço para a sidebar fixa */
+      transition: margin-left 0.3s ease;
+      background: var(--dark-bg); /* Fundo principal para a área de conteúdo */
+      min-height: calc(100vh - 60px); /* Garante preenchimento vertical */
+      width: calc(100% - 280px); /* Garante preenchimento horizontal */
+      overflow-y: auto; /* Permite scroll no conteúdo */
+    }
+
+    /* Panels */
+    .panel {
+      display: none;
+      animation: fadeIn 0.5s;
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px; /* Espaço entre painéis */
+      box-shadow: var(--shadow);
+      flex-direction: column; /* Garante que o conteúdo do painel flua em coluna */
+    }
+    .panel.active { display: flex; } /* Use flex para controlar o layout interno se necessário */
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-header h2 {
+      color: var(--primary-color);
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+    }
+    .panel-header h2 i { margin-right: 10px; color: var(--accent-color); }
+
+
+    .panel-actions .btn { margin-left: 10px; }
+
+    .panel-section {
+        margin-bottom: 25px; /* Espaço entre seções dentro do painel */
+        padding-bottom: 15px; /* Padding abaixo da seção */
+        border-bottom: 1px solid var(--border-color); /* Separador */
+    }
+    .panel-section:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .panel-section h3 {
+        color: var(--primary-color);
+        font-size: 18px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+    .panel-section h3 i { margin-right: 8px; color: var(--secondary-color); }
+
+
+    /* Stats cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Ajustado para caber 4 ou mais */
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--dark-bg); /* Fundo leve para cards de estatística */
+      padding: 20px;
+      border-radius: var(--border-radius);
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+    .stat-card:hover {
+        background: var(--hover-bg);
+        border-color: var(--primary-color);
+    }
+
+
+    .stat-card h3 {
+      color: var(--text-light); /* Título da estatística */
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+        color: var(--primary-color); /* Valor com cor primária */
+        font-weight: bold;
+    }
+
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      background: var(--light-bg); /* Fundo claro para tabelas */
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-light);
+    }
+
+    th {
+      background: var(--hover-bg); /* Fundo para cabeçalho da tabela */
+      font-weight: bold;
+      color: var(--primary-color); /* Texto do cabeçalho com cor primária */
+    }
+    td .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.8em;
+        border-radius: 4px;
+    }
+    td .btn-info { background: #17a2b8; color: white; }
+    td .btn-danger { background: #dc3545; color: white; }
+    td .btn-warning { background: #ffc107; color: #212529; }
+
+
+    /* CRM Pipeline Styles */
+    .crm-pipeline {
+        display: flex;
+        gap: 20px;
+        margin-top: 20px;
+        overflow-x: auto; /* Permite scroll horizontal se necessário */
+        padding-bottom: 10px; /* Espaço para o scrollbar */
+    }
+
+    .pipeline-stage {
+        flex: 1;
+        min-width: 250px; /* Largura mínima para cada estágio */
+        background: var(--dark-bg); /* Fundo suave para estágios */
+        padding: 15px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+    }
+
+    .pipeline-stage h4 {
+        color: var(--primary-color);
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+    }
+    .pipeline-stage h4 i { margin-right: 8px; color: var(--accent-color); }
+
+
+    .pipeline-card {
+        background: var(--light-bg); /* Fundo branco para cards */
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        color: var(--text-light);
+        cursor: grab; /* Cursor de arraste */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--border-color);
+        transition: var(--transition);
+    }
+    .pipeline-card:last-child { margin-bottom: 0; }
+    .pipeline-card:hover {
+        background: var(--hover-bg);
+        border-color: var(--primary-color);
+    }
+     .pipeline-card.dragging { opacity: 0.5; }
+
+    /* Remote screen (for Media Player visualization) */
+    .remote-screen {
+      width: 100%;
+      height: 500px; /* Altura fixa */
+      border: 2px solid var(--primary-color); /* Borda com cor primária */
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      background: var(--dark-bg);
+      position: relative;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      display: flex; /* Usar flex para centralizar conteúdo */
+      justify-content: center;
+      align-items: center;
+      color: var(--text-dark);
+      font-size: 1.5em;
+    }
+
+    /* Image/Ad Section as seen in the image */
+    .ad-section {
+        margin-bottom: 30px;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        position: relative; /* Para o overlay de texto */
+        height: 300px; /* Altura fixa para a seção de anúncio */
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: flex-end; /* Alinha o conteúdo na parte inferior */
+    }
+
+    .ad-content-overlay {
+        background: rgba(0, 0, 0, 0.6); /* Overlay escuro */
+        color: white;
+        padding: 15px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .ad-content-overlay h3 {
+        color: white; /* Título branco no overlay */
+        margin-bottom: 5px;
+        font-size: 1.2em;
+    }
+     .ad-content-overlay p {
+        font-size: 0.9em;
+        color: var(--text-dark); /* Texto do overlay mais suave */
+     }
+
+
+    /* Placeholder styles */
+    .placeholder-content {
+        padding: 40px 20px;
+        text-align: center;
+        color: var(--text-dark);
+        background: var(--dark-bg);
+        border: 1px dashed var(--border-color);
+        border-radius: var(--border-radius);
+    }
+    .placeholder-content ul {
+        list-style-position: inside;
+        text-align: left;
+        margin-top: 15px;
+        display: inline-block;
+    }
+    .placeholder-content ul li {
+        margin-bottom: 5px;
+    }
+
+
+    /* Utility/Action Buttons */
+    .btn {
+      padding: 8px 16px; /* Padding ajustado */
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover { background: #5a178a; }
+
+    .btn-success { background: var(--secondary-color); }
+    .btn-success:hover { background: #22a35b; }
+
+    .btn-info { background: #17a2b8; }
+    .btn-info:hover { background: #138496; }
+
+    .btn-warning { background: #ffc107; color: #212529; }
+    .btn-warning:hover { background: #e0a800; }
+
+    .btn-danger { background: #dc3545; }
+    .btn-danger:hover { background: #c82333; }
+
+    .btn-secondary {
+        background: var(--dark-bg);
+        color: var(--text-light);
+        border: 1px solid var(--border-color);
+    }
+    .btn-secondary:hover {
+        background: var(--hover-bg);
+        border-color: var(--primary-color);
+    }
+     .btn-sm {
+         padding: 5px 10px;
+         font-size: 0.9em;
+         gap: 5px;
+     }
+
+
+    /* Responsive Adjustments (Optional but Recommended) */
+    @media (max-width: 992px) {
+        .main-sidebar {
+            width: 200px; /* Diminui a sidebar em tablets */
+        }
+        .main-content {
+            margin-left: 200px; /* Ajusta margem do conteúdo */
+            width: calc(100% - 200px);
+        }
+        .sidebar-section h2 { font-size: 16px; }
+        .sidebar-nav li a { padding: 8px 12px; }
+         .stats-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Ajusta cards de estatística */ }
+         .pipeline-stage { min-width: 200px; /* Ajusta estágio do funil */ }
+         .panel-header h2 { font-size: 20px; }
+    }
+
+     @media (max-width: 768px) {
+        .header-inner { padding: 0 10px; }
+        .logo span { display: none; } /* Oculta texto do logo em telas pequenas */
+        #sidebar-toggle { margin-right: 5px; }
+
+         /* Simula sidebar colapsada em mobile, ou pode ser sobreposta */
+         .main-sidebar { width: 60px; padding: 10px 5px; }
+         .main-sidebar .sidebar-section h2 span,
+         .main-sidebar .sidebar-nav li a span { display: none; }
+         .main-sidebar .sidebar-section h2 i,
+         .main-sidebar .sidebar-nav li a i { margin-right: 0; width: 100%; text-align: center; }
+         .sidebar-section h2 { justify-content: center;}
+
+         .main-content {
+             margin-left: 60px; /* Ajusta margem para sidebar "mini" */
+             width: calc(100% - 60px);
+             padding: 15px;
+         }
+
+        .stats-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
+        .panel-header { flex-direction: column; align-items: flex-start; }
+        .panel-actions { margin-top: 10px; width: 100%; display: flex; flex-wrap: wrap; gap: 10px; }
+        .panel-actions .btn { flex-grow: 1; justify-content: center; } /* Botões ocupam espaço disponível */
+         .crm-pipeline { flex-direction: column; /* Pode empilhar estágios do funil em mobile */ }
+         .pipeline-stage { min-width: 100%; }
+         .ad-section { height: 200px; /* Altura menor para anúncio em mobile */ }
+
+     }
+      @media (max-width: 480px) {
+           .stats-grid { grid-template-columns: 1fr; gap: 10px; } /* Stats em coluna única */
+           .btn { padding: 6px 12px; gap: 5px; }
+           .panel-header h2 { font-size: 18px; }
+           .panel-section h3 { font-size: 16px; }
+            th, td { padding: 8px 10px; }
+      }
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <button id="sidebar-toggle" class="btn">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="logo">
+        <i class="fas fa-building"></i>
+        <span>ImobIndoor Social Mídia</span>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="toggleSettings()">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div class="main-sidebar" id="main-sidebar">
+      <div class="sidebar-section">
+        <h2><i class="fas fa-sliders-h"></i> <span>Painel de Controle</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" class="active" onclick="showPanel('dashboard')">
+            <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
+          </a></li>
+          <li><a href="#" onclick="showPanel('media')">
+            <i class="fas fa-tv"></i> <span>Mídia Player</span>
+          </a></li>
+          <li><a href="#" onclick="showPanel('integration')">
+            <i class="fas fa-link"></i> <span>Integração</span>
+          </a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h2><i class="fas fa-desktop-alt"></i> <span>Sistema Integrado</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showPanel('remote_tools_access')">
+            <i class="fas fa-tools"></i> <span>Acessar Ferramentas Remotas</span>
+          </a></li>
+          <li><a href="#" onclick="showPanel('remote_commands')">
+            <i class="fas fa-terminal"></i> <span>Executar Comandos Remotos</span>
+          </a></li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <h2><i class="fas fa-tools"></i> <span>Ferramentas</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showPanel('crm')"><i class="fas fa-users"></i> <span>CRM</span></a></li>
+          <li><a href="#" onclick="showPanel('media-editor')"><i class="fas fa-edit"></i> <span>Editor de Mídia</span></a></li>
+          <li><a href="#" onclick="showPanel('document-templates')"><i class="fas fa-file-alt"></i> <span>Modelos</span></a></li>
+          <li><a href="#" onclick="showPanel('property-evaluation')"><i class="fas fa-calculator"></i> <span>Avaliação</span></a></li>
+          <li><a href="#" onclick="showPanel('reports')"><i class="fas fa-chart-bar"></i> <span>Relatórios</span></a></li>
+          <li><a href="#" onclick="showPanel('smart-cash')"><i class="fas fa-money-bill-wave"></i> <span>Smart Cash</span></a></li>
+          <li><a href="#" onclick="showPanel('property-inspection')"><i class="fas fa-clipboard-check"></i> <span>Vistoria de Imóveis</span></a></li>
+          <li><a href="#" onclick="showPanel('social-campaigns')"><i class="fas fa-share-alt"></i> <span>Campanhas Sociais</span></a></li>
+          <li><a href="#" onclick="showPanel('paid-traffic')"><i class="fas fa-ad"></i> <span>Tráfego Pago</span></a></li>
+          <li><a href="#" onclick="showPanel('real-estate-listings')"><i class="fas fa-home"></i> <span>Listagens Imobiliárias</span></a></li>
+          <li><a href="#" onclick="showPanel('condominium-communication')"><i class="fas fa-building"></i> <span>Comunicação Condominial</span></a></li>
+          <li><a href="#" onclick="showPanel('service-marketplace')"><i class="fas fa-store"></i> <span>Marketplace de Serviços</span></a></li>
+          <li><a href="#" onclick="showPanel('transport-services')"><i class="fas fa-car"></i> <span>Serviços de Transporte</span></a></li>
+          <li><a href="#" onclick="showPanel('financial-services')"><i class="fas fa-piggy-bank"></i> <span>Serviços Financeiros</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h2><i class="fas fa-concierge-bell"></i> <span>Serviços</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showPanel('sptrans')"><i class="fas fa-bus"></i> <span>SPTrans - Recarga Bilhete Único</span></a></li>
+          <li><a href="#" onclick="showPanel('supermarket')"><i class="fas fa-shopping-cart"></i> <span>Supermercado - Compra/Entrega</span></a></li>
+          <li><a href="#" onclick="showPanel('pharmacy')"><i class="fas fa-prescription-bottle-alt"></i> <span>Farmácia - Compra/Entrega</span></a></li>
+          <li><a href="#" onclick="showPanel('transport')"><i class="fas fa-taxi"></i> <span>99/Uber - Transporte</span></a></li>
+          <li><a href="#" onclick="showPanel('city-services')"><i class="fas fa-city"></i> <span>Prefeitura - Serviços</span></a></li>
+          <li><a href="#" onclick="showPanel('property-management')"><i class="fas fa-key"></i> <span>Administração de Imóveis</span></a></li>
+          <li><a href="#" onclick="showPanel('rental-services')"><i class="fas fa-house-user"></i> <span>Aluguel de Imóveis</span></a></li>
+          <li><a href="#" onclick="showPanel('real-estate-sales')"><i class="fas fa-handshake"></i> <span>Venda de Imóveis</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h2><i class="fas fa-plug"></i> <span>Integrações</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showPanel('lopes')"><i class="fas fa-home"></i> <span>Lopes</span></a></li>
+          <li><a href="#" onclick="showPanel('quinto-andar')"><i class="fas fa-building"></i> <span>Quinto Andar</span></a></li>
+          <li><a href="#" onclick="showPanel('loft')"><i class="fas fa-warehouse"></i> <span>Loft</span></a></li>
+          <li><a href="#" onclick="showPanel('zap-imoveis')"><i class="fas fa-map-marked-alt"></i> <span>Zap Imóveis</span></a></li>
+          <li><a href="#" onclick="showPanel('viva-real')"><i class="fas fa-home"></i> <span>Viva Real</span></a></li>
+          <li><a href="#" onclick="showPanel('imovel-web')"><i class="fas fa-globe"></i> <span>Imóvel Web</span></a></li>
+          <li><a href="#" onclick="showPanel('casa-mineira')"><i class="fas fa-home"></i> <span>Casa Mineira</span></a></li>
+          <li><a href="#" onclick="showPanel('fernandez-mera')"><i class="fas fa-building"></i> <span>Fernandez Mera</span></a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h2><i class="fas fa-cog"></i> <span>Configurações</span></h2>
+        <ul class="sidebar-nav">
+          <li><a href="#" onclick="showPanel('settings')"><i class="fas fa-sliders-h"></i> <span>Sistema</span></a></li>
+          <li><a href="#" onclick="showPanel('users')"><i class="fas fa-user-cog"></i> <span>Usuários</span></a></li>
+          <li><a href="#" onclick="showPanel('backup')"><i class="fas fa-database"></i> <span>Backup</span></a></li>
+          <li><a href="#" onclick="showPanel('plans')"><i class="fas fa-box-open"></i> <span>Planos</span></a></li>
+          <li><a href="#" onclick="showPanel('api')"><i class="fas fa-code"></i> <span>API</span></a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div id="dashboard" class="panel active">
+         <div class="panel-header">
+             <h2><i class="fas fa-tachometer-alt"></i> Painel de Controle</h2>
+             <div class="panel-actions">
+               <button class="btn btn-success" onclick="exportData('all')">
+                 <i class="fas fa-download"></i> Exportar Tudo
+               </button>
+               <button class="btn btn-info" onclick="refreshSystem()">
+                 <i class="fas fa-sync-alt"></i> Atualizar
+               </button>
+             </div>
+           </div>
+
+           <div class="stats-grid">
+             <div class="stat-card">
+               <h3>Clientes Ativos</h3>
+               <div class="value">42</div>
+             </div>
+             <div class="stat-card">
+               <h3>Campanhas Ativas</h3>
+               <div class="value">18</div>
+             </div>
+             <div class="stat-card">
+               <h3>Receita Mensal</h3>
+               <div class="value">R$ 24.980</div>
+             </div>
+             <div class="stat-card">
+               <h3>Leads CRM</h3>
+               <div class="value">156</div>
+             </div>
+           </div>
+
+           <div class="panel-section">
+                <h3><i class="fas fa-image"></i> Anúncio de Imóvel</h3>
+                <div class="ad-section" style="background-image: url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1000&q=80');">
+                     <div class="ad-content-overlay">
+                         <h3>Casa Moderna - Alto Padrão</h3>
+                         <p>4 suítes | 450m² | Vista Panorâmica</p>
+                     </div>
+                </div>
+           </div>
+
+
+           <div class="panel-section">
+             <h3><i class="fas fa-table"></i> Resumo dos Imóveis</h3>
+             <table>
+               <thead>
+                 <tr>
+                   <th>ID</th>
+                   <th>Tipo</th>
+                   <th>Localização</th>
+                   <th>Status</th>
+                   <th>Ações</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td>IM001</td>
+                   <td>Apartamento</td>
+                   <td>Jardins</td>
+                   <td>Disponível</td>
+                   <td>
+                     <button class="btn btn-info btn-sm" onclick="editProperty('IM001')"><i class="fas fa-edit"></i></button>
+                     <button class="btn btn-danger btn-sm" onclick="removeProperty('IM001')"><i class="fas fa-trash"></i></button>
+                   </td>
+                 </tr>
+                 <tr>
+                   <td>IM002</td>
+                   <td>Casa</td>
+                   <td>Morumbi</td>
+                   <td>Vendida</td>
+                   <td>
+                     <button class="btn btn-info btn-sm" onclick="editProperty('IM002')"><i class="fas fa-edit"></i></button>
+                     <button class="btn btn-danger btn-sm" onclick="removeProperty('IM002')"><i class="fas fa-trash"></i></button>
+                   </td>
+                 </tr>
+                  <tr>
+                    <td>IM003</td>
+                    <td>Cobertura</td>
+                    <td>Itaim Bibi</td>
+                    <td>Disponível</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editProperty('IM003')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="removeProperty('IM003')"><i class="fas fa-trash"></i></button>
+                     </td>
+                  </tr>
+               </tbody>
+             </table>
+           </div>
+
+           <div class="panel-section">
+             <h3><i class="fas fa-history"></i> Atividade Recente</h3>
+             <table>
+               <thead>
+                 <tr>
+                   <th>Data/Hora</th>
+                   <th>Ação</th>
+                   <th>Usuário</th>
+                   <th>Status</th>
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td>10/05/2025 09:15</td>
+                   <td>Atualização de anúncio</td>
+                   <td>admin</td>
+                   <td>Concluído</td>
+                 </tr>
+                 <tr>
+                   <td>10/05/2025 08:30</td>
+                   <td>Sincronização CRM</td>
+                   <td>system</td>
+                   <td>Concluído</td>
+                 </tr>
+                  <tr>
+                   <td>09/05/2025 10:45</td>
+                   <td>Cadastro de novo cliente</td>
+                   <td>user1</td>
+                   <td>Concluído</td>
+                 </tr>
+                 <tr>
+                   <td>09/05/2025 11:15</td>
+                   <td>Envio de e-mail marketing</td>
+                   <td>user2</td>
+                   <td>Pendente</td>
+                 </tr>
+                 <tr>
+                   <td>08/05/2025 14:30</td>
+                   <td>Avaliação de imóvel</td>
+                   <td>analista</td>
+                   <td>Concluído</td>
+                 </tr>
+               </tbody>
+             </table>
+           </div>
+      </div>
+
+      <div id="media" class="panel">
+         <div class="panel-header">
+            <h2><i class="fas fa-tv"></i> ImobIndoor Media Player</h2>
+            <div class="panel-actions">
+              <button class="btn btn-success" onclick="openMediaPlayer()">
+                <i class="fas fa-external-link-alt"></i> Abrir Player
+              </button>
+              <button class="btn btn-info" onclick="syncMediaContent()">
+                <i class="fas fa-sync-alt"></i> Sincronizar
+              </button>
+            </div>
+          </div>
+
+          <div class="remote-screen">
+            <div class="remote-screen-content">
+              <h3><i class="fas fa-spinner fa-spin"></i> Conectando à Visualização...</h3>
+              </div>
+          </div>
+
+          <div class="panel-section">
+            <h3><i class="fas fa-ad"></i> Gerenciamento de Anúncios</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Local</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>MP001</td>
+                  <td>Anúncio Apartamento</td>
+                  <td>Torre A - Elevador</td>
+                  <td>Ativo</td>
+                  <td>
+                    <button class="btn btn-info btn-sm" onclick="editMedia('MP001')"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="removeMedia('MP001')"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>MP002</td>
+                  <td>Anúncio Supermercado</td>
+                  <td>Torre B - Lobby</td>
+                  <td>Ativo</td>
+                  <td>
+                     <button class="btn btn-info btn-sm" onclick="editMedia('MP002')"><i class="fas fa-edit"></i></button>
+                     <button class="btn btn-danger btn-sm" onclick="removeMedia('MP002')"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+                 <tr>
+                    <td>MP003</td>
+                    <td>Anúncio Farmácia</td>
+                    <td>Torre C - Elevador</td>
+                    <td>Pendente</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editMedia('MP003')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="removeMedia('MP003')"><i class="fas fa-trash"></i></button>
+                     </td>
+                 </tr>
+                </tbody>
+            </table>
+          </div>
+      </div>
+
+       <div id="crm" class="panel">
+          <div class="panel-header">
+              <h2><i class="fas fa-users"></i> ImobIndoor CRM - Gestão de Vendas e Leads</h2>
+              <div class="panel-actions">
+                  <button class="btn btn-success" onclick="addCRMClient()">
+                      <i class="fas fa-user-plus"></i> Novo Lead
+                  </button>
+                  <button class="btn btn-info" onclick="importCRMLeads()">
+                      <i class="fas fa-file-import"></i> Importar Leads
+                  </button>
+                  <button class="btn btn-warning" onclick="showCRMFunnel()">
+                       <i class="fas fa-filter"></i> Ver Funil
+                   </button>
+              </div>
+          </div>
+
+          <div class="panel-section">
+               <h3><i class="fas fa-filter"></i> Funil de Vendas</h3>
+               <div class="crm-pipeline">
+                 <div class="pipeline-stage" data-stage="Leads">
+                   <h4><i class="fas fa-bullhorn"></i> Leads (500)</h4>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL003">João Silva - Interesse em apto 3 quartos</div>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL004">Maria Souza - Solicitou avaliação</div>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL008">Fernanda Costa - Visitou site</div>
+                   </div>
+                 <div class="pipeline-stage" data-stage="Prospectos">
+                   <h4><i class="fas fa-user-check"></i> Prospectos (120)</h4>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL005">Carlos Lima - Agendou visita</div>
+                    <div class="pipeline-card" draggable="true" data-lead-id="CL009">Bruno Dias - Baixou material</div>
+                    </div>
+                 <div class="pipeline-stage" data-stage="Negociações">
+                   <h4><i class="fas fa-comments-dollar"></i> Negociações (45)</h4>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL006">Ana Pereira - Proposta enviada</div>
+                    <div class="pipeline-card" draggable="true" data-lead-id="CL010">Mariana Rocha - Contraproposta</div>
+                   </div>
+                 <div class="pipeline-stage" data-stage="Fechados">
+                   <h4><i class="fas fa-handshake"></i> Fechados (30)</h4>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL007">Pedro Almeida - Contrato assinado</div>
+                   <div class="pipeline-card" draggable="true" data-lead-id="CL011">Luisa Mendes - Pagamento inicial</div>
+                   </div>
+               </div>
+             </div>
+
+             <div class="panel-section">
+               <h3><i class="fas fa-users"></i> Gestão de Leads</h3>
+               <table>
+                 <thead>
+                   <tr>
+                     <th>ID</th>
+                     <th>Nome</th>
+                     <th>E-mail</th>
+                     <th>Fonte</th>
+                     <th>Status</th>
+                     <th>Pontuação</th>
+                     <th>Ações</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   <tr>
+                     <td>CL001</td>
+                     <td>João Silva</td>
+                     <td>joao@exemplo.com</td>
+                     <td>Zillow</td>
+                     <td>Prospecto</td>
+                     <td>85</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editLead('CL001')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-warning btn-sm" onclick="contactLead('CL001')"><i class="fas fa-phone"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="deleteLead('CL001')"><i class="fas fa-trash"></i></button>
+                     </td>
+                   </tr>
+                   <tr>
+                     <td>CL002</td>
+                     <td>Maria Souza</td>
+                     <td>maria@exemplo.com</td>
+                     <td>Realtor.com</td>
+                     <td>Lead</td>
+                     <td>60</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editLead('CL002')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-warning btn-sm" onclick="contactLead('CL002')"><i class="fas fa-phone"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="deleteLead('CL002')"><i class="fas fa-trash"></i></button>
+                     </td>
+                   </tr>
+                    <tr>
+                     <td>CL003</td>
+                     <td>João Silva</td>
+                     <td>joao@exemplo.com</td>
+                     <td>Anúncio Facebook</td>
+                     <td>Lead</td>
+                     <td>55</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editLead('CL003')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-warning btn-sm" onclick="contactLead('CL003')"><i class="fas fa-phone"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="deleteLead('CL003')"><i class="fas fa-trash"></i></button>
+                     </td>
+                   </tr>
+                   <tr>
+                     <td>CL004</td>
+                     <td>Maria Souza</td>
+                     <td>maria.s@exemplo.com</td>
+                     <td>Landing Page</td>
+                     <td>Lead</td>
+                     <td>70</td>
+                     <td>
+                       <button class="btn btn-info btn-sm" onclick="editLead('CL004')"><i class="fas fa-edit"></i></button>
+                       <button class="btn btn-warning btn-sm" onclick="contactLead('CL004')"><i class="fas fa-phone"></i></button>
+                       <button class="btn btn-danger btn-sm" onclick="deleteLead('CL004')"><i class="fas fa-trash"></i></button>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+             </div>
+       </div>
+
+       <div id="integration" class="panel">
+         <div class="panel-header">
+           <h2><i class="fas fa-link"></i> Integrações</h2>
+           <div class="panel-actions">
+             <button class="btn btn-success" onclick="addIntegration()">
+               <i class="fas fa-plus"></i> Nova Integração
+             </button>
+           </div>
+         </div>
+
+         <div class="panel-section">
+           <h3><i class="fas fa-plug"></i> Integrações Ativas</h3>
+           <table>
+             <thead>
+               <tr>
+                 <th>Plataforma</th>
+                 <th>Status</th>
+                 <th>Última Sincronização</th>
+                 <th>Ações</th>
+               </tr>
+             </thead>
+             <tbody>
+               <tr>
+                 <td>Lopes</td>
+                 <td><span style="color: var(--secondary-color);">Ativo</span></td>
+                 <td>10/05/2025 07:45</td>
+                 <td>
+                   <button class="btn btn-info btn-sm" onclick="configIntegration('lopes')"><i class="fas fa-cog"></i></button>
+                   <button class="btn btn-danger btn-sm" onclick="toggleIntegration('lopes', false)"><i class="fas fa-toggle-off"></i></button>
+                 </td>
+               </tr>
+               <tr>
+                 <td>Quinto Andar</td>
+                 <td><span style="color: var(--secondary-color);">Ativo</span></td>
+                 <td>10/05/2025 06:30</td>
+                 <td>
+                    <button class="btn btn-info btn-sm" onclick="configIntegration('quinto-andar')"><i class="fas fa-cog"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="toggleIntegration('quinto-andar', false)"><i class="fas fa-toggle-off"></i></button>
+                 </td>
+               </tr>
+                <tr>
+                 <td>Zap Imóveis</td>
+                 <td><span style="color: #dc3545;">Inativo</span></td>
+                 <td>-</td>
+                 <td>
+                   <button class="btn btn-info btn-sm" onclick="configIntegration('zap-imoveis')"><i class="fas fa-cog"></i></button>
+                   <button class="btn btn-success btn-sm" onclick="toggleIntegration('zap-imoveis', true)"><i class="fas fa-toggle-on"></i></button>
+                 </td>
+               </tr>
+             </tbody>
+           </table>
+         </div>
+       </div>
+
+      <div id="remote_tools_access" class="panel">
+        <div class="panel-header">
+          <h2><i class="fas fa-tools"></i> Acesso às Ferramentas do Sistema Remoto</h2>
+        </div>
+        <div class="panel-section" style="height: calc(100vh - 200px); padding:0; margin:0;">
+          <iframe src="SistemaIndexMidia.html" style="width:100%; height:100%; border:none;"></iframe>
+        </div>
+      </div>
+
+      <div id="remote_commands" class="panel">
+        <div class="panel-header">
+          <h2><i class="fas fa-terminal"></i> Execução de Comandos Remotos</h2>
+        </div>
+        <div class="panel-section">
+          <p class="placeholder-content">
+            <i class="fas fa-satellite-dish"></i> Interface para enviar comandos e ações diretas para o sistema de mídia indoor. (Em desenvolvimento)
+            <br><br>
+            Exemplos de comandos:
+            <ul>
+              <li>Iniciar/Parar Mídia Específica</li>
+              <li>Alterar Volume</li>
+              <li>Reiniciar Display</li>
+              <li>Atualizar Conteúdo Agendado</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+
+
+        <div id="media-editor" class="panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-edit"></i> Editor de Mídia</h2>
+                <div class="panel-actions">
+                    <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                </div>
+            </div>
+            <div class="panel-section"><p class="placeholder-content">Funcionalidade de Editor de Mídia em desenvolvimento.</p></div>
+        </div>
+        <div id="document-templates" class="panel">
+             <div class="panel-header">
+                 <h2><i class="fas fa-file-alt"></i> Modelos de Documentos</h2>
+                 <div class="panel-actions">
+                     <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                 </div>
+             </div>
+             <div class="panel-section"><p class="placeholder-content">Funcionalidade de Modelos em desenvolvimento.</p></div>
+        </div>
+        <div id="property-evaluation" class="panel">
+             <div class="panel-header">
+                 <h2><i class="fas fa-calculator"></i> Avaliação de Imóveis</h2>
+                 <div class="panel-actions">
+                     <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                 </div>
+             </div>
+             <div class="panel-section"><p class="placeholder-content">Funcionalidade de Avaliação em desenvolvimento.</p></div>
+        </div>
+        <div id="reports" class="panel">
+             <div class="panel-header">
+                 <h2><i class="fas fa-chart-bar"></i> Relatórios</h2>
+                 <div class="panel-actions">
+                     <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                 </div>
+             </div>
+             <div class="panel-section"><p class="placeholder-content">Funcionalidade de Relatórios em desenvolvimento.</p></div>
+        </div>
+        <div id="smart-cash" class="panel">
+             <div class="panel-header">
+                 <h2><i class="fas fa-money-bill-wave"></i> Smart Cash</h2>
+                 <div class="panel-actions">
+                     <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                 </div>
+             </div>
+             <div class="panel-section"><p class="placeholder-content">Funcionalidade de Smart Cash em desenvolvimento.</p></div>
+        </div>
+        <div id="property-inspection" class="panel">
+             <div class="panel-header">
+                 <h2><i class="fas fa-clipboard-check"></i> Vistoria de Imóveis</h2>
+                 <div class="panel-actions">
+                     <button class="btn btn-secondary" onclick="showPanel('dashboard')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                 </div>
+             </div>
+             <div class="panel-section"><p class="placeholder-content">Funcionalidade de Vistoria de Imóveis em desenvolvimento.</p></div>
+        </div>
+
+        <!-- Painéis de Ferramentas Adicionais (placeholders) -->
+        <div id="social-campaigns" class="panel"><div class="panel-header"><h2><i class="fas fa-share-alt"></i> Campanhas Sociais</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="paid-traffic" class="panel"><div class="panel-header"><h2><i class="fas fa-ad"></i> Tráfego Pago</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="real-estate-listings" class="panel"><div class="panel-header"><h2><i class="fas fa-home"></i> Listagens Imobiliárias</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="condominium-communication" class="panel"><div class="panel-header"><h2><i class="fas fa-building"></i> Comunicação Condominial</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="service-marketplace" class="panel"><div class="panel-header"><h2><i class="fas fa-store"></i> Marketplace de Serviços</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="transport-services" class="panel"><div class="panel-header"><h2><i class="fas fa-car"></i> Serviços de Transporte</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="financial-services" class="panel"><div class="panel-header"><h2><i class="fas fa-piggy-bank"></i> Serviços Financeiros</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+
+        <!-- Painéis de Serviços (placeholders) -->
+        <div id="sptrans" class="panel"><div class="panel-header"><h2><i class="fas fa-bus"></i> SPTrans - Recarga</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="supermarket" class="panel"><div class="panel-header"><h2><i class="fas fa-shopping-cart"></i> Supermercado</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="pharmacy" class="panel"><div class="panel-header"><h2><i class="fas fa-prescription-bottle-alt"></i> Farmácia</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="transport" class="panel"><div class="panel-header"><h2><i class="fas fa-taxi"></i> 99/Uber</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="city-services" class="panel"><div class="panel-header"><h2><i class="fas fa-city"></i> Prefeitura - Serviços</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="property-management" class="panel"><div class="panel-header"><h2><i class="fas fa-key"></i> Administração de Imóveis</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="rental-services" class="panel"><div class="panel-header"><h2><i class="fas fa-house-user"></i> Aluguel de Imóveis</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="real-estate-sales" class="panel"><div class="panel-header"><h2><i class="fas fa-handshake"></i> Venda de Imóveis</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+
+        <!-- Painéis de Integrações (placeholders) -->
+        <div id="lopes" class="panel"><div class="panel-header"><h2><i class="fas fa-home"></i> Integração Lopes</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="quinto-andar" class="panel"><div class="panel-header"><h2><i class="fas fa-building"></i> Integração Quinto Andar</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="loft" class="panel"><div class="panel-header"><h2><i class="fas fa-warehouse"></i> Integração Loft</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="zap-imoveis" class="panel"><div class="panel-header"><h2><i class="fas fa-map-marked-alt"></i> Integração Zap Imóveis</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="viva-real" class="panel"><div class="panel-header"><h2><i class="fas fa-home"></i> Integração Viva Real</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="imovel-web" class="panel"><div class="panel-header"><h2><i class="fas fa-globe"></i> Integração Imóvel Web</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="casa-mineira" class="panel"><div class="panel-header"><h2><i class="fas fa-home"></i> Integração Casa Mineira</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="fernandez-mera" class="panel"><div class="panel-header"><h2><i class="fas fa-building"></i> Integração Fernandez Mera</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+
+        <!-- Painéis de Configurações (placeholders) -->
+        <div id="settings" class="panel"><div class="panel-header"><h2><i class="fas fa-sliders-h"></i> Configurações do Sistema</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="users" class="panel"><div class="panel-header"><h2><i class="fas fa-user-cog"></i> Gerenciamento de Usuários</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="backup" class="panel"><div class="panel-header"><h2><i class="fas fa-database"></i> Backup e Restauração</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="plans" class="panel"><div class="panel-header"><h2><i class="fas fa-box-open"></i> Gerenciamento de Planos</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+        <div id="api" class="panel"><div class="panel-header"><h2><i class="fas fa-code"></i> Configurações de API</h2></div><p class="placeholder-content">Em desenvolvimento.</p></div>
+
+    </div>
+  </div>
+
+  <script>
+    const panels = document.querySelectorAll('.panel');
+    const sidebarLinks = document.querySelectorAll('.main-sidebar .sidebar-nav a');
+    const mainSidebar = document.getElementById('main-sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+
+    function showPanel(panelId) {
+      panels.forEach(panel => {
+        panel.classList.remove('active');
+      });
+      const activePanel = document.getElementById(panelId);
+      if (activePanel) {
+        activePanel.classList.add('active');
+      }
+
+      sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('onclick').includes(`showPanel('${panelId}')`)) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    sidebarToggle.addEventListener('click', () => {
+        mainSidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
+        if (mainSidebar.classList.contains('collapsed')) {
+            mainSidebar.style.width = '60px';
+            mainContent.style.marginLeft = '60px';
+            mainContent.style.width = 'calc(100% - 60px)';
+            // Ocultar textos e ajustar ícones
+            mainSidebar.querySelectorAll('.sidebar-section h2 span').forEach(span => span.style.display = 'none');
+            mainSidebar.querySelectorAll('.sidebar-nav li a span').forEach(span => span.style.display = 'none');
+            mainSidebar.querySelectorAll('.sidebar-section h2 i').forEach(i => { i.style.marginRight = '0'; i.style.width = '100%'; i.style.textAlign = 'center';});
+            mainSidebar.querySelectorAll('.sidebar-nav li a i').forEach(i => { i.style.marginRight = '0'; i.style.width = '100%'; i.style.textAlign = 'center';});
+            mainSidebar.querySelectorAll('.sidebar-section h2').forEach(h2 => h2.style.justifyContent = 'center');
+        } else {
+            mainSidebar.style.width = '280px';
+            mainContent.style.marginLeft = '280px';
+            mainContent.style.width = 'calc(100% - 280px)';
+            // Mostrar textos e reajustar ícones
+            mainSidebar.querySelectorAll('.sidebar-section h2 span').forEach(span => span.style.display = 'inline');
+            mainSidebar.querySelectorAll('.sidebar-nav li a span').forEach(span => span.style.display = 'inline');
+            mainSidebar.querySelectorAll('.sidebar-section h2 i').forEach(i => { i.style.marginRight = '8px'; i.style.width = 'auto'; i.style.textAlign = 'left'; });
+            mainSidebar.querySelectorAll('.sidebar-nav li a i').forEach(i => { i.style.marginRight = '10px'; i.style.width = '20px'; i.style.textAlign = 'center';});
+            mainSidebar.querySelectorAll('.sidebar-section h2').forEach(h2 => h2.style.justifyContent = 'flex-start');
+        }
+    });
+
+    // Funções de placeholder para ações dos botões
+    function exportData(type) { alert(`Simulação: Exportando dados (${type})...`); }
+    function refreshSystem() { alert('Simulação: Atualizando sistema...'); location.reload(); }
+    function editProperty(id) { alert(`Simulação: Editando propriedade ${id}...`); }
+    function removeProperty(id) { alert(`Simulação: Removendo propriedade ${id}...`); }
+    function openMediaPlayer() { alert('Simulação: Abrindo Media Player...'); }
+    function syncMediaContent() { alert('Simulação: Sincronizando conteúdo de mídia...'); }
+    function editMedia(id) { alert(`Simulação: Editando mídia ${id}...`); }
+    function removeMedia(id) { alert(`Simulação: Removendo mídia ${id}...`); }
+    function addCRMClient() { alert('Simulação: Adicionando novo lead/cliente...'); }
+    function importCRMLeads() { alert('Simulação: Importando leads...'); }
+    function showCRMFunnel() { alert('Simulação: Mostrando funil de vendas...'); }
+    function editLead(id) { alert(`Simulação: Editando lead ${id}...`); }
+    function contactLead(id) { alert(`Simulação: Contatando lead ${id}...`); }
+    function deleteLead(id) { alert(`Simulação: Deletando lead ${id}...`); }
+    function addIntegration() { alert('Simulação: Adicionando nova integração...'); }
+    function configIntegration(platform) { alert(`Simulação: Configurando integração com ${platform}...`); }
+    function toggleIntegration(platform, status) { alert(`Simulação: Alterando status da integração com ${platform} para ${status ? 'ativo' : 'inativo'}...`); }
+    function toggleSettings() { alert('Simulação: Abrindo configurações...'); }
+
+    // Inicializa com o painel de dashboard ativo
+    document.addEventListener('DOMContentLoaded', () => {
+        showPanel('dashboard');
+
+        // Lógica de arrastar e soltar para o CRM Pipeline
+        const pipelineCards = document.querySelectorAll('.pipeline-card');
+        const pipelineStages = document.querySelectorAll('.pipeline-stage');
+
+        pipelineCards.forEach(card => {
+            card.addEventListener('dragstart', () => {
+                card.classList.add('dragging');
+            });
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+        });
+
+        pipelineStages.forEach(stage => {
+            stage.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(stage, e.clientY);
+                const draggable = document.querySelector('.dragging');
+                if (afterElement == null) {
+                    stage.appendChild(draggable);
+                } else {
+                    stage.insertBefore(draggable, afterElement);
+                }
+            });
+        });
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.pipeline-card:not(.dragging)')];
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+    });
+
+  </script>
+  <script src="scripts/painel.js"></script>
+</body>
+</html>
+
