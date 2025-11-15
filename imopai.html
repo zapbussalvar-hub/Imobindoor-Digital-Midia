@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imopar - Painel de Controle ImobIndoor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary: #6A1B9A;
+      --bg: #020617;
+      --bg-soft: #020617;
+      --panel: #020617;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,23,42,0.96);
+      backdrop-filter: blur(14px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      font-size: 0.98rem;
+    }
+    .logo span { color: var(--accent); }
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+    aside {
+      border-right: 1px solid var(--border);
+      background: radial-gradient(circle at top left, rgba(250, 204, 21, 0.07), #020617 55%);
+      padding: 14px 12px 18px;
+    }
+    main {
+      padding: 18px 18px 28px;
+      overflow: auto;
+    }
+    .section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+    .menu-group { margin-bottom: 14px; }
+    .menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .menu button {
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      cursor: pointer;
+      text-align: left;
+    }
+    .menu button i { width: 18px; text-align: center; font-size: 0.9rem; }
+    .menu button.active {
+      background: radial-gradient(circle at left, rgba(251,191,36,0.23), rgba(15,23,42,0.95));
+      color: var(--text);
+      border: 1px solid rgba(251,191,36,0.4);
+    }
+    .menu button:hover:not(.active) {
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+    }
+    .panel {
+      display: none;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 18px 18px 16px;
+      background: radial-gradient(circle at top left, rgba(251,191,36,0.05), #020617);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.75);
+    }
+    .panel.active { display: block; }
+    .panel header {
+      position: static;
+      border: none;
+      padding: 0 0 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      backdrop-filter: none;
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    .panel-title span.icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, var(--accent), var(--primary));
+      color: #020617;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 14px;
+    }
+    .chip {
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      font-size: 0.74rem;
+      padding: 3px 8px;
+      color: var(--muted);
+    }
+    .info-box {
+      border-radius: 12px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.9);
+      padding: 12px 12px 10px;
+      font-size: 0.82rem;
+      color: #d1d5db;
+      margin-bottom: 14px;
+    }
+    .info-box code {
+      background: rgba(15,23,42,0.9);
+      border-radius: 5px;
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 2px 5px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+      gap: 14px;
+      margin-top: 10px;
+    }
+    .card-soft {
+      border-radius: 12px;
+      border: 1px solid rgba(31,41,55,0.9);
+      background: rgba(15,23,42,0.96);
+      padding: 10px 12px;
+      font-size: 0.83rem;
+      color: #d1d5db;
+    }
+    .card-soft h3 {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--accent);
+    }
+    .card-soft ol { padding-left: 18px; margin-top: 4px; }
+    .card-soft li { margin-bottom: 4px; }
+    .badge-url {
+      word-break: break-all;
+      font-size: 0.78rem;
+      margin-top: 4px;
+      display: inline-block;
+    }
+    .btn-xs {
+      font-size: 0.75rem;
+      padding: 4px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      background: rgba(15,23,42,0.9);
+      color: #e5e7eb;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .tag-ok {
+      font-size: 0.74rem;
+      color: #22c55e;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    @media (max-width: 840px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { display: none; }
+      main { padding-top: 12px; }
+      .panel { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <i class="fa-solid fa-building"></i>
+      IMOBINDOOR <span>IMOPAR</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);">
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      GitHub: zapbussalvar-hub/Imobindoor
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="menu-group">
+        <div class="section-title">Principal</div>
+        <ul class="menu">
+          <li><button data-panel="painel" class="active"><i class="fa-solid fa-gauge"></i>Resumo Geral</button></li>
+          <li><button data-panel="midia"><i class="fa-solid fa-tv"></i>Mídia Indoor</button></li>
+        </ul>
+      </div>
+      <div class="menu-group">
+        <div class="section-title">Ferramentas</div>
+        <ul class="menu">
+          <li><button data-panel="tutorial"><i class="fa-solid fa-book"></i>Passo a passo</button></li>
+          <li><button data-panel="links"><i class="fa-solid fa-link"></i>Links prontos</button></li>
+        </ul>
+      </div>
+    </aside>
+    <main>
+      <section id="panel-painel" class="panel active">
+        <header>
+          <div class="panel-title">
+            <span class="icon"><i class="fa-solid fa-gauge"></i></span>
+            <div>
+              <div>Resumo do Sistema</div>
+              <small style="color:var(--muted);font-size:0.8rem;">Imopar como painel de controle remoto do Imoel</small>
+            </div>
+          </div>
+        </header>
+        <div class="info-box">
+          Este painel é a “mesa de comando” do seu sistema ImobIndoor.  
+          Você hospeda tudo no GitHub e usa a TV Box para exibir o conteúdo na tela do elevador.
+        </div>
+        <div class="grid-2">
+          <div class="card-soft">
+            <h3><i class="fa-solid fa-cloud"></i> Hospedagem</h3>
+            <p>Repositório GitHub:</p>
+            <p class="badge-url"><code>https://github.com/zapbussalvar-hub/Imobindoor</code></p>
+            <p style="margin-top:6px;">GitHub Pages (site publicado):</p>
+            <p class="badge-url"><code>https://zapbussalvar-hub.github.io/Imobindoor/</code></p>
+            <button class="btn-xs" onclick="navigator.clipboard.writeText('https://zapbussalvar-hub.github.io/Imobindoor/');">
+              <i class="fa-regular fa-copy"></i> Copiar URL do site
+            </button>
+          </div>
+          <div class="card-soft">
+            <h3><i class="fa-solid fa-display"></i> TV Box / Elevador</h3>
+            <p>URL que você deve abrir na TV BOX para rodar as mídias:</p>
+            <p class="badge-url"><code>https://zapbussalvar-hub.github.io/Imobindoor/imoel.html</code></p>
+            <div class="tag-ok">
+              <i class="fa-solid fa-circle-check"></i> Use o navegador da TV e coloque em tela cheia.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-midia" class="panel">
+        <header>
+          <div class="panel-title">
+            <span class="icon"><i class="fa-solid fa-tv"></i></span>
+            <div>
+              <div>Mídia Indoor – Controle Simples</div>
+              <small style="color:var(--muted);font-size:0.8rem;">Baseado em pasta <code>media/</code> + arquivo <code>playlist.txt</code></small>
+            </div>
+          </div>
+        </header>
+        <div class="info-box">
+          <strong>Funcionamento real, sem simulação:</strong><br>
+          O player Imoel lê o arquivo <code>playlist.txt</code> no repositório e toca as mídias da pasta <code>media/</code> em loop.
+        </div>
+        <div class="grid-2">
+          <div class="card-soft">
+            <h3><i class="fa-solid fa-folder-open"></i> Passos para controlar as mídias</h3>
+            <ol>
+              <li>No GitHub, crie a pasta <code>media/</code> (se ainda não existir).</li>
+              <li>Envie suas imagens e vídeos para dentro dessa pasta.</li>
+              <li>Edite o arquivo <code>playlist.txt</code> e coloque um arquivo por linha, por exemplo:<br>
+                <code>banner1.jpg</code><br>
+                <code>video1.mp4</code>
+              </li>
+              <li>Salve o arquivo. Em poucos segundos, a TV atualiza sozinha.</li>
+            </ol>
+          </div>
+          <div class="card-soft">
+            <h3><i class="fa-solid fa-circle-play"></i> Exemplo de playlist</h3>
+            <p>Dentro do <code>playlist.txt</code> você pode deixar assim:</p>
+<pre style="font-size:0.78rem;background:#020617;border-radius:8px;padding:8px;border:1px solid #1f2937;overflow:auto;"># Um arquivo por linha, dentro da pasta media/
+banner_condominio.jpg
+oferta_supermercado.png
+video_lancamento.mp4
+</pre>
+            <p style="margin-top:4px;">Linhas iniciadas com <code>#</code> são comentários e serão ignoradas pelo player.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-tutorial" class="panel">
+        <header>
+          <div class="panel-title">
+            <span class="icon"><i class="fa-solid fa-book"></i></span>
+            <div>
+              <div>Tutorial Rápido</div>
+              <small style="color:var(--muted);font-size:0.8rem;">Resumo do manual em linguagem simples</small>
+            </div>
+          </div>
+        </header>
+        <div class="card-soft">
+          <h3><i class="fa-solid fa-1"></i> Subiu os arquivos no GitHub</h3>
+          <p>Envie para o repositório os arquivos que recebeu (index, imopai, imoel, playlist.txt, manual etc.).</p>
+        </div>
+        <div class="card-soft" style="margin-top:10px;">
+          <h3><i class="fa-solid fa-2"></i> Ative o GitHub Pages</h3>
+          <p>No GitHub, vá em <strong>Settings &gt; Pages</strong>, escolha a branch <code>main</code> e pasta <code>/(root)</code>.</p>
+        </div>
+        <div class="card-soft" style="margin-top:10px;">
+          <h3><i class="fa-solid fa-3"></i> Configure as mídias</h3>
+          <p>Crie/abra a pasta <code>media/</code>, envie os arquivos e atualize o conteúdo de <code>playlist.txt</code>.</p>
+        </div>
+        <div class="card-soft" style="margin-top:10px;">
+          <h3><i class="fa-solid fa-4"></i> Abra o player na TV Box</h3>
+          <p>Na TV Box, abra o navegador e digite: <code>https://zapbussalvar-hub.github.io/Imobindoor/imoel.html</code> e deixe em tela cheia.</p>
+        </div>
+      </section>
+
+      <section id="panel-links" class="panel">
+        <header>
+          <div class="panel-title">
+            <span class="icon"><i class="fa-solid fa-link"></i></span>
+            <div>
+              <div>Links importantes</div>
+              <small style="color:var(--muted);font-size:0.8rem;">Tudo o que você precisa guardar</small>
+            </div>
+          </div>
+        </header>
+        <div class="card-soft">
+          <h3><i class="fa-brands fa-github"></i> GitHub do projeto</h3>
+          <p>Repositório: <code>https://github.com/zapbussalvar-hub/Imobindoor</code></p>
+        </div>
+        <div class="card-soft" style="margin-top:10px;">
+          <h3><i class="fa-solid fa-globe"></i> Site publicado (GitHub Pages)</h3>
+          <p>Página inicial: <code>https://zapbussalvar-hub.github.io/Imobindoor/</code></p>
+          <p>Painel Imopar: <code>https://zapbussalvar-hub.github.io/Imobindoor/imopai.html</code></p>
+          <p>Player Imoel: <code>https://zapbussalvar-hub.github.io/Imobindoor/imoel.html</code></p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const buttons = document.querySelectorAll('aside .menu button');
+    const panels = document.querySelectorAll('main .panel');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.panel;
+        panels.forEach(p => p.classList.remove('active'));
+        const el = document.getElementById('panel-' + target);
+        if (el) el.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imoel - Player de Mídia Indoor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #f9fafb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow: hidden;
+    }
+    .player-root {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+    }
+    .status-bar {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      font-size: 0.8rem;
+      background: rgba(15,23,42,0.96);
+      color: #e5e7eb;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+    }
+    .status-bar span.label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-bar span.label i { color: #fbbf24; }
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #9ca3af;
+    }
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34,197,94,0.9);
+    }
+    .screen {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+    .screen-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    .screen-inner img,
+    .screen-inner video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+    .overlay-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+    .overlay-info .left { max-width: 70%; }
+    .overlay-info .title {
+      font-weight: 600;
+      letter-spacing: .03em;
+    }
+    .overlay-info .subtitle {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      opacity: .8;
+    }
+    .overlay-info .badge {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(148,163,184,0.7);
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .center-message {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: #e5e7eb;
+      gap: 8px;
+    }
+    .center-message i {
+      font-size: 2rem;
+      color: #fbbf24;
+    }
+    .center-message p { font-size: 0.9rem; color: #d1d5db; }
+    .center-message code {
+      font-size: 0.8rem;
+      background: rgba(15,23,42,0.9);
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="player-root">
+    <div class="status-bar">
+      <span class="label">
+        <i class="fa-solid fa-building"></i>
+        ImobIndoor · Imoel
+      </span>
+      <div class="status-right">
+        <div class="status-dot"></div>
+        <span id="statusText">Aguardando playlist...</span>
+      </div>
+    </div>
+    <div class="screen">
+      <div class="screen-inner" id="screenInner">
+        <div class="center-message" id="placeholderMsg">
+          <i class="fa-regular fa-circle-play"></i>
+          <strong>Nenhuma mídia configurada ainda.</strong>
+          <p>
+            Edite o arquivo <code>playlist.txt</code> no repositório e envie arquivos para a pasta <code>media/</code>.
+          </p>
+          <p style="font-size:0.8rem;color:#9ca3af;">
+            Exemplo de linhas dentro do playlist.txt:<br>
+            <code>banner1.jpg</code> · <code>video1.mp4</code>
+          </p>
+        </div>
+      </div>
+      <div class="overlay-info" id="overlayInfo" style="display:none;">
+        <div class="left">
+          <div class="title" id="overlayTitle">Mídia Indoor</div>
+          <div class="subtitle" id="overlaySubtitle">Imagens e vídeos da pasta media/</div>
+        </div>
+        <span class="badge">
+          <i class="fa-solid fa-wifi"></i>
+          Player conectado
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PLAYLIST_FILE = "playlist.txt";
+    const MEDIA_DIR = "media/";
+
+    let playlist = [];
+    let currentIndex = 0;
+    let timer = null;
+
+    async function loadPlaylist() {{
+      try {{
+        const res = await fetch(PLAYLIST_FILE + "?t=" + Date.now());
+        if (!res.ok) throw new Error("playlist.txt não encontrado");
+        const text = await res.text();
+
+        const lines = text
+          .split(/\r?\n/)
+          .map(l => l.trim())
+          .filter(l => l && !l.startsWith("#"));
+
+        playlist = lines.map(name => {{
+          const lower = name.toLowerCase();
+          const isVideo = lower.endsWith(".mp4") || lower.endsWith(".webm") || lower.endsWith(".ogg");
+          return {{
+            name,
+            url: MEDIA_DIR + name,
+            type: isVideo ? "video" : "image"
+          }};
+        }});
+      }} catch (err) {{
+        console.error(err);
+        playlist = [];
+      }}
+    }}
+
+    function showStatus(text) {{
+      const el = document.getElementById("statusText");
+      if (el) el.textContent = text;
+    }}
+
+    function showMediaItem(item) {{
+      const screenInner = document.getElementById("screenInner");
+      const overlay = document.getElementById("overlayInfo");
+      const placeholder = document.getElementById("placeholderMsg");
+
+      if (!screenInner || !item) return;
+
+      placeholder && (placeholder.style.display = "none");
+      overlay.style.display = "flex";
+
+      if (item.type === "video") {{
+        screenInner.innerHTML = `<video src="${{item.url}}" autoplay muted playsinline></video>`;
+      }} else {{
+        screenInner.innerHTML = `<img src="${{item.url}}" alt="">`;
+      }}
+
+      const titleEl = document.getElementById("overlayTitle");
+      const subEl = document.getElementById("overlaySubtitle");
+      if (titleEl) titleEl.textContent = item.name;
+      if (subEl) subEl.textContent = "Arquivo da pasta media/";
+    }}
+
+    function nextIndex() {{
+      if (!playlist.length) return 0;
+      currentIndex = (currentIndex + 1) % playlist.length;
+      return currentIndex;
+    }}
+
+    function startLoop() {{
+      if (!playlist.length) {{
+        showStatus("Nenhuma mídia na playlist.");
+        return;
+      }}
+      showStatus("Reproduzindo playlist (" + playlist.length + " itens)...");
+      let idx = 0;
+      const baseDuration = 10000; // 10 segundos para imagens
+
+      function tick() {{
+        const item = playlist[idx];
+        showMediaItem(item);
+        const isVideo = item.type === "video";
+        const delay = isVideo ? baseDuration * 2 : baseDuration;
+        idx = (idx + 1) % playlist.length;
+        timer = setTimeout(tick, delay);
+      }}
+
+      tick();
+    }}
+
+    async function initPlayer() {{
+      showStatus("Carregando playlist...");
+      await loadPlaylist();
+      if (!playlist.length) {{
+        showStatus("Configure o arquivo playlist.txt.");
+        return;
+      }}
+      startLoop();
+
+      // Atualiza a playlist periodicamente (ex: a cada 60 segundos)
+      setInterval(async () => {{
+        const previous = playlist.map(p => p.name).join(",");
+        await loadPlaylist();
+        const now = playlist.map(p => p.name).join(",");
+        if (previous !== now) {{
+          if (timer) clearTimeout(timer);
+          startLoop();
+        }}
+      }}, 60000);
+    }}
+
+    document.addEventListener("DOMContentLoaded", initPlayer);
+  </script>
+</body>
+</html>

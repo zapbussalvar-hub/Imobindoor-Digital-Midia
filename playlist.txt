@@ -1,0 +1,6 @@
+# ImobIndoor - Playlist de Mídias
+# Coloque um arquivo por linha, SEM o caminho 'media/'
+# Exemplo depois de enviar os arquivos para a pasta media/ do GitHub:
+# banner_condominio.jpg
+# oferta_supermercado.png
+# video_lancamento.mp4

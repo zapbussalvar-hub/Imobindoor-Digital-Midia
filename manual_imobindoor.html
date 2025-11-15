@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual ImobIndoor - zapbussalvar-hub / Imobindoor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f172a;
+      margin: 0;
+      padding: 0;
+      color: #e5e7eb;
+    }
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 32px;
+    }
+    h1, h2, h3 { color: #fbbf24; }
+    h1 { text-align:center; margin-bottom: 8px; }
+    p { line-height: 1.6; font-size: 0.95rem; }
+    .step {
+      margin: 14px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(55,65,81,0.9);
+    }
+    .step h2 { margin-top: 0; font-size: 1.05rem; }
+    .step ol { padding-left: 20px; }
+    code {
+      background: rgba(15,23,42,0.9);
+      border-radius: 5px;
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 2px 6px;
+      font-size: 0.86rem;
+    }
+    .box {
+      border-radius: 10px;
+      border: 1px dashed rgba(148,163,184,0.8);
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      margin: 10px 0;
+      background: rgba(15,23,42,0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Manual ImobIndoor</h1>
+    <p style="text-align:center;margin-bottom:16px;">
+      Repositório: <code>https://github.com/zapbussalvar-hub/Imobindoor</code><br>
+      Site (GitHub Pages): <code>https://zapbussalvar-hub.github.io/Imobindoor/</code>
+    </p>
+
+    <div class="step">
+      <h2>1. O que cada arquivo faz</h2>
+      <ul>
+        <li><code>index.html</code> – tela inicial com atalhos.</li>
+        <li><code>imopai.html</code> – painel Imopar (controle).</li>
+        <li><code>imoel.html</code> – player Imoel (tela do elevador).</li>
+        <li><code>playlist.txt</code> – lista de arquivos que o player vai tocar.</li>
+        <li>pasta <code>media/</code> – onde ficam as imagens e vídeos.</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <h2>2. Publicar no GitHub Pages</h2>
+      <ol>
+        <li>Abra o repositório no navegador: <code>https://github.com/zapbussalvar-hub/Imobindoor</code>.</li>
+        <li>Clique em <strong>Add file ▸ Upload files</strong> e envie os arquivos que recebeu.</li>
+        <li>Depois clique em <strong>Commit changes</strong>.</li>
+        <li>Vá em <strong>Settings ▸ Pages</strong>.</li>
+        <li>Em <strong>Source</strong>, escolha <strong>Deploy from a branch</strong>.</li>
+        <li>Em <strong>Branch</strong>, escolha <code>main</code> e pasta <code>/(root)</code>, e salve.</li>
+      </ol>
+      <div class="box">
+        Depois de alguns minutos, o site estará disponível em:<br>
+        <code>https://zapbussalvar-hub.github.io/Imobindoor/</code>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>3. Criar a pasta de mídias</h2>
+      <ol>
+        <li>No repositório, clique em <strong>Add file ▸ Create new file</strong>.</li>
+        <li>Digite o nome: <code>media/.keep</code></li>
+        <li>Clique em <strong>Commit changes</strong>.</li>
+      </ol>
+      <p>Isso cria a pasta <code>media/</code> onde ficarão suas imagens e vídeos.</p>
+    </div>
+
+    <div class="step">
+      <h2>4. Enviar imagens e vídeos</h2>
+      <ol>
+        <li>Entre na pasta <code>media/</code> dentro do repositório.</li>
+        <li>Clique em <strong>Upload files</strong>.</li>
+        <li>Escolha suas imagens (JPG, PNG) e vídeos (MP4).</li>
+        <li>Clique em <strong>Commit changes</strong> para salvar.</li>
+      </ol>
+      <div class="box">
+        Exemplos de nomes: <code>banner_condominio.jpg</code>, <code>oferta_supermercado.png</code>, <code>video_lancamento.mp4</code>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>5. Editar a playlist</h2>
+      <p>O arquivo <code>playlist.txt</code> diz ao player quais arquivos tocar, e em qual ordem.</p>
+      <ol>
+        <li>No repositório, clique em <code>playlist.txt</code>.</li>
+        <li>Clique em <strong>Edit</strong> (ícone de lápis).</li>
+        <li>Dentro dele, coloque um arquivo por linha, por exemplo:</li>
+      </ol>
+<pre class="box"># Comentários começam com #
+banner_condominio.jpg
+oferta_supermercado.png
+video_lancamento.mp4
+</pre>
+      <ol start="4">
+        <li>Clique em <strong>Commit changes</strong>.</li>
+      </ol>
+      <p>Pronto: o player já vai ler essa lista e tocar em loop.</p>
+    </div>
+
+    <div class="step">
+      <h2>6. Usar na TV Box MX9</h2>
+      <ol>
+        <li>Ligue a TV Box e conecte ao Wi‑Fi.</li>
+        <li>Abra o navegador (Chrome ou nativo).</li>
+        <li>No endereço, digite: <code>https://zapbussalvar-hub.github.io/Imobindoor/imoel.html</code></li>
+        <li>Aperte Enter e espere carregar.</li>
+        <li>Coloque em modo <strong>tela cheia</strong>.</li>
+      </ol>
+      <p>Enquanto a TV estiver com essa página aberta, o elevador exibirá as mídias configuradas.</p>
+    </div>
+
+    <div class="step">
+      <h2>7. Onde fazer ajustes no futuro</h2>
+      <ul>
+        <li>Quer trocar mídias? Envie/edite arquivos na pasta <code>media/</code>.</li>
+        <li>Quer mudar a ordem? Ajuste a sequência no arquivo <code>playlist.txt</code>.</li>
+        <li>Quer ver os links principais? Abra <code>https://zapbussalvar-hub.github.io/Imobindoor/imopai.html</code> no computador.</li>
+      </ul>
+    </div>
+
+    <p style="margin-top:18px;font-size:0.86rem;color:#9ca3af;">
+      Com isso você funciona como provedor de mídia indoor usando apenas GitHub + TV Box, sem servidor próprio e sem programação.
+    </p>
+  </div>
+</body>
+</html>
